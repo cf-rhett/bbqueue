@@ -1,0 +1,26 @@
+bbqueue/src/prod_cons/framed.rs
+  s_5b947522986241::t_3f548a0a0955d7 433
+  s_5b947522986241::t_d4304990ddcf1e 168-174,180-182,184,186,434-471
+bbqueue/src/prod_cons/mod.rs
+  s_5b947522986241::t_68c2973977aaa1 71-75,84-88
+bbqueue/src/prod_cons/stream.rs
+  s_5b947522986241::t_d6fa7a2ae1c5c5 148-157,159,161-162,165,343-379
+bbqueue/src/queue.rs
+  s_5b947522986241::t_aa072219bd9796 103-105,172-174
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7d6e7738e19a8aea81a2dd7045de1cd342681dd2",
+  "prompts": {},
+  "sessions": {
+    "s_5b947522986241": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_049a1e557ffeBFvrLIGGEZ0ssm",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Rhett Griggs <rhett@cloudflare.com>"
+    }
+  }
+}
