@@ -1,0 +1,21 @@
+bbqueue/src/prod_cons/framed.rs
+  s_5b947522986241::t_3f548a0a0955d7 137-142,219-224,439-489
+bbqueue/src/queue.rs
+  s_5b947522986241::t_8afce9a0e061a4 103,170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e5d8773f572ace5b5a62a154eb7f4651b7121fef",
+  "prompts": {},
+  "sessions": {
+    "s_5b947522986241": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_049a1e557ffeBFvrLIGGEZ0ssm",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Rhett Griggs <rhett@cloudflare.com>"
+    }
+  }
+}
