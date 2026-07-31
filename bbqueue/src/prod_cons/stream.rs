@@ -134,6 +134,9 @@ where
 {
     /// Wait for a grant of any size, up to `max`, to become available
     pub async fn wait_grant_max_remaining(&self, max: usize) -> StreamGrantW<Q> {
+        if let Ok(grant) = self.grant_max_remaining(max) {
+            return grant;
+        }
         self.bbq
             .not
             .wait_for_not_full(|| self.grant_max_remaining(max).ok())
@@ -144,6 +147,9 @@ where
     ///
     /// If `sz` exceeds the capacity of the buffer, this method will never return.
     pub async fn wait_grant_exact(&self, sz: usize) -> StreamGrantW<Q> {
+        if let Ok(grant) = self.grant_exact(sz) {
+            return grant;
+        }
         self.bbq
             .not
             .wait_for_not_full(|| self.grant_exact(sz).ok())
@@ -193,6 +199,9 @@ where
 {
     /// Wait for any read data to become available
     pub async fn wait_read(&self) -> StreamGrantR<Q> {
+        if let Ok(grant) = self.read() {
+            return grant;
+        }
         self.bbq.not.wait_for_not_empty(|| self.read().ok()).await
     }
 }

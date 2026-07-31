@@ -169,6 +169,9 @@ where
     /// a smaller size may be committed. Dropping the grant without calling
     /// commit means that no data will be made visible to the consumer.
     pub async fn wait_grant(&self, sz: H) -> FramedGrantW<Q, H> {
+        if let Ok(grant) = self.grant(sz) {
+            return grant;
+        }
         self.bbq.not.wait_for_not_full(|| self.grant(sz).ok()).await
     }
 }
@@ -247,6 +250,9 @@ where
     ///
     /// The returned grant must be released to free the space in the buffer.
     pub async fn wait_read(&self) -> FramedGrantR<Q, H> {
+        if let Ok(grant) = self.read() {
+            return grant;
+        }
         self.bbq.not.wait_for_not_empty(|| self.read().ok()).await
     }
 }
