@@ -1,0 +1,19 @@
+bbqueue/src/prod_cons/stream.rs
+  s_deab78188f1a62::t_b1205ccd2737a8 220-221,277-278
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0ade4b75c23acfb4bfd88d964eda5ebe7a61361d",
+  "prompts": {},
+  "sessions": {
+    "s_deab78188f1a62": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_04afe5728ffeIeSxvVR8KgKHct",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Rhett Griggs <rhett@cloudflare.com>"
+    }
+  }
+}
