@@ -145,15 +145,24 @@ where
 
     /// Wait for a grant of EXACTLY `sz` to become available.
     ///
-    /// If `sz` exceeds the capacity of the buffer, this method will never return.
-    pub async fn wait_grant_exact(&self, sz: usize) -> StreamGrantW<Q> {
-        if let Ok(grant) = self.grant_exact(sz) {
-            return grant;
+    /// # Errors
+    ///
+    /// Returns [`WriteGrantError::InsufficientSize`] when `sz` cannot fit the
+    /// buffer even when empty. Releasing every outstanding read grant would not
+    /// satisfy such a request, so it is reported rather than awaited.
+    pub async fn wait_grant_exact(&self, sz: usize) -> Result<StreamGrantW<Q>, WriteGrantError> {
+        if sz > self.capacity() {
+            return Err(WriteGrantError::InsufficientSize);
         }
-        self.bbq
+
+        if let Ok(grant) = self.grant_exact(sz) {
+            return Ok(grant);
+        }
+        Ok(self
+            .bbq
             .not
             .wait_for_not_full(|| self.grant_exact(sz).ok())
-            .await
+            .await)
     }
 }
 
@@ -331,3 +340,40 @@ where
 }
 
 unsafe impl<Q: BbqHandle + Send> Send for StreamGrantR<Q> {}
+
+#[cfg(all(test, feature = "maitake-sync-0_3"))]
+mod async_tests {
+    use core::{
+        future::Future,
+        pin::pin,
+        task::{Context, Poll, Waker},
+    };
+
+    use crate::{
+        BBQueue,
+        prod_cons::stream::StreamProducer,
+        traits::{
+            coordination::{WriteGrantError, cas::AtomicCoord},
+            notifier::maitake::MaiNotSpsc,
+            storage::Inline,
+        },
+    };
+
+    type AsyncRing = BBQueue<Inline<64>, AtomicCoord, MaiNotSpsc>;
+
+    /// A request larger than the whole buffer can never be granted, so the wait
+    /// resolves instead of parking on a consumer that cannot help.
+    #[test]
+    fn wait_grant_exact_rejects_a_size_larger_than_the_buffer() {
+        let bbq: AsyncRing = BBQueue::new();
+        let prod: StreamProducer<&AsyncRing> = bbq.stream_producer();
+
+        let sz = prod.capacity() + 1;
+
+        let mut wait = pin!(prod.wait_grant_exact(sz));
+        let Poll::Ready(res) = wait.as_mut().poll(&mut Context::from_waker(Waker::noop())) else {
+            panic!("wait_grant_exact parked on a request no consumer can satisfy");
+        };
+        assert_eq!(res.err(), Some(WriteGrantError::InsufficientSize));
+    }
+}

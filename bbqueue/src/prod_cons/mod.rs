@@ -68,7 +68,11 @@ mod tests {
         let stream_producer = stream.stream_producer();
         let stream_consumer = stream.stream_consumer();
 
-        stream_producer.wait_grant_exact(1).await.commit(1);
+        stream_producer
+            .wait_grant_exact(1)
+            .await
+            .expect("1 byte fits a 64 byte buffer")
+            .commit(1);
         stream_consumer.wait_read().await.release(1);
         stream_producer.wait_grant_max_remaining(1).await.commit(1);
         stream_consumer.wait_read().await.release(1);
@@ -77,7 +81,11 @@ mod tests {
         let framed_producer = framed.framed_producer();
         let framed_consumer = framed.framed_consumer();
 
-        framed_producer.wait_grant(1).await.commit(1);
+        framed_producer
+            .wait_grant(1)
+            .await
+            .expect("a 1 byte frame fits a 64 byte buffer")
+            .commit(1);
         framed_consumer.wait_read().await.release();
 
         assert_eq!(WAIT_CALLS.load(Ordering::Relaxed), 0);
